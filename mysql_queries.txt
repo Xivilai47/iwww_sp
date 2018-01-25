@@ -1,0 +1,20 @@
+***
+POHLED pretty_offer
+create or replace view pretty_offer AS select o.id as 'Offer_ID', c.nazev as 'Country', cit.nazev as 'City', h.nazev as 'Hotel', r.no_of_beds as 'No_of_Beds', date_format(o.date_from, "%e. %c. %Y") as 'From', date_format(o.date_to, "%e. %c. %Y") as 'To', r.price_night * o.no_of_days as 'Price', o.user_ID as 'Reserved_by' from offers o join rooms r on o.ID_Room = r.ID join hotels h on r.ID_Hotel = h.ID join cities cit on cit.ID = h.city_ID join countries c on c.ID = cit.country_ID 
+***
+PRIDANI FK
+ALTER TABLE `hotels` ADD CONSTRAINT `hotels_ibfk_1` FOREIGN KEY (`ID_Country`) REFERENCES `hotels`(`ID`);
+***
+PRIDANI SLOUPCE
+alter table offers add detail text(2048)
+***
+PRIDANI DEFAULT
+ALTER TABLE users MODIFY COLUMN profile_picture VARCHAR(255) NOT NULL DEFAULT 'img/profile_pics/default.png' 
+***
+POHLED pretty_offer2
+create or replace view pretty_offer2 AS select o.id, concat(c.nazev, " > ", cit.nazev, " > ", h.nazev, " > ", o.ID_Room) as 'Zemì > Mìsto > Hotel > ID místnosti', o.reserved as 'Zarezervovano', o.user_ID as 'Zarezervovano uzivatelem', o.date_from as 'Od', o.date_to as 'Do', o.no_of_days as 'Dní', o.detail as 'Detail' from offers o join rooms r on r.ID = o.ID_Room join hotels h on h.ID = r.ID_Hotel join cities cit on cit.ID = h.city_ID join countries c on c.ID = cit.country_ID
+***
+
+
+TODO:
+z offers lze vyškrtnout sloupec "reserved" - lze øešit rozhodováním, zda je user_ID null nebo ne
