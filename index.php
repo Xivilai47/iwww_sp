@@ -95,17 +95,15 @@ if (isset($_GET['offer_id']) && isset($_GET['cancel'])) {
 if (isset($_GET['new_coutry']) && isset($_POST['new_country_nazev'])) {
     $stmt = $conn->prepare("INSERT INTO countries (nazev) VALUES ('" . $_POST['new_country_nazev'] . "')");
     $stmt->execute();
-    unset($_GET['new_coutry']);
-    unset($_POST['new_country_nazev']);
-    header("Location: http://localhost/index.php?page=administration&table=destinations");
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
 /* add country end */
 
 /* edit country */
-if (isset($_GET['edit_country']) && isset($_POST['new_country_name_id']) && isset($_POST['new_country_name'])) {
-    $stmt = $conn->prepare("UPDATE countries SET nazev='" . $_POST['new_country_name'] . "' WHERE id=" . $_POST['new_country_name_id']);
+if (isset($_GET['edit_country']) && isset($_POST['updated_country_id']) && isset($_POST['updated_country_name'])) {
+    $stmt = $conn->prepare("UPDATE countries SET nazev='" . $_POST['updated_country_name'] . "' WHERE id=" . $_POST['updated_country_id']);
     $stmt->execute();
-    header("Location: http://localhost/index.php?page=administration&table=destinations");
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
 /* edit country end */
 
@@ -113,11 +111,36 @@ if (isset($_GET['edit_country']) && isset($_POST['new_country_name_id']) && isse
 if (isset($_GET['delete_country']) && isset($_GET['country_id'])) {
     $stmt = $conn->prepare("DELETE FROM countries WHERE id=" . $_GET['country_id']);
     $stmt->execute();
-    header("Location: http://localhost/index.php?page=administration&table=destinations");
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
 /* delete country end */
 
+/* add city */
+if (isset($_GET['new_city']) && isset($_POST['new_city_nazev']) && isset($_POST['new_city_country_id'])) {
+    $stmt = $conn->prepare("INSERT INTO cities (nazev, country_id) VALUES ('" . $_POST['new_city_nazev'] . "', " . $_POST['new_city_country_id'] . ")");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
+}
+/* add city end */
+
+/* edit city */
+if (isset($_GET['edit_city']) && isset($_POST['updated_city_id']) && isset($_POST['updated_city_name']) && isset($_POST['updated_city_country_id'])) {
+    $stmt = $conn->prepare("UPDATE cities SET nazev='" . $_POST['updated_city_name'] . "', country_id=" . $_POST['updated_city_country_id'] . " WHERE id=" . $_POST['updated_city_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
+}
+/* edit city end*/
+
+/* delete city */
+if (isset($_GET['delete_city']) && isset($_GET['city_id'])) {
+    $stmt = $conn->prepare("DELETE FROM cities WHERE id=" . $_GET['city_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
+}
+/* delete city end */
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>

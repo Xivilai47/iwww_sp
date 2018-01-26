@@ -32,7 +32,7 @@
                             echo "<h1>Správa destinací</h1>
                               <p class='lead'>Na této stránce lze spravovat veškerý obsah týkající se jednotlivých destinací. 
                               Možné je přidávání nových, úprava stávajících či jejich smazání. V blízké budoucnosti půjde 
-                              i řadit a možná i filtrovat :P</p><hr/>";
+                              i řadit a možná i filtrovat :P</p>";
                             include_once "administration_dests.php";
                             break;
                         case 'users':
