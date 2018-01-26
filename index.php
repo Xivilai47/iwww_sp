@@ -139,6 +139,54 @@ if (isset($_GET['delete_city']) && isset($_GET['city_id'])) {
 }
 /* delete city end */
 
+/* add hotel */
+if (isset($_GET['new_hotel']) && isset($_POST['new_hotel_nazev']) && isset($_POST['new_hotel_city_id'])) {
+    $stmt = $conn->prepare("INSERT INTO hotels (nazev, city_id) VALUES ('" . $_POST['new_hotel_nazev'] . "', " . $_POST['new_hotel_city_id'] . ")");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
+}
+/* add hotel end */
+
+/* edit hotel */
+if (isset($_GET['edit_hotel']) && isset($_POST['updated_hotel_id']) && isset($_POST['updated_hotel_name']) && isset($_POST['updated_hotel_city_id'])) {
+    $stmt = $conn->prepare("UPDATE hotels SET nazev='" . $_POST['updated_hotel_name'] . "', city_id=" . $_POST['updated_hotel_city_id'] . " WHERE id=" . $_POST['updated_hotel_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
+}
+/* edit hotel end */
+
+/* delete hotel */
+if (isset($_GET['delete_hotel']) && isset($_GET['hotel_id'])) {
+    $stmt = $conn->prepare("DELETE FROM hotels WHERE id=" . $_GET['hotel_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
+}
+/* delete hotel end */
+
+/* add room */
+if (isset($_GET['new_room']) && isset($_POST['new_room_no_of_beds']) && isset($_POST['new_room_price_night']) && isset($_POST['new_room_hotel_id'])) {
+    $stmt = $conn->prepare("INSERT INTO rooms (No_of_Beds, Price_Night, taken, id_hotel) VALUES (" . $_POST['new_room_no_of_beds'] . ", " . $_POST['new_room_price_night'] . ", 0, " . $_POST['new_room_hotel_id'] . ")");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
+}
+/* add room end */
+
+/* edit room */
+if (isset($_GET['edit_room']) && isset($_POST['updated_room_id']) && isset($_POST['updated_room_no_of_beds']) && isset($_POST['updated_room_price_night']) && isset($_POST['updated_room_hotel_id'])) {
+    $stmt = $conn->prepare("UPDATE rooms SET no_of_beds=" . $_POST['updated_room_no_of_beds'] . ", price_night=" . $_POST['updated_room_price_night'] . ", id_hotel=".$_POST['updated_room_hotel_id']." WHERE id=" . $_POST['updated_room_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
+}
+/* edit room end */
+
+/* delete room */
+if (isset($_GET['delete_room']) && isset($_GET['room_id'])) {
+    $stmt = $conn->prepare("DELETE FROM rooms WHERE id=" . $_GET['room_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
+}
+/* delete room end */
+
 ?>
 
 <!DOCTYPE html>

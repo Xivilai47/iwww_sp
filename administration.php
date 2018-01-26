@@ -21,6 +21,7 @@
             </ul>
         </div>
             <div class="row">
+                <a name="admin_top" class="anchor"></a>
                 <?php
                 if (isset($_GET['table'])) {
                     switch ($_GET['table']) {
