@@ -25,7 +25,6 @@
                 <?php
                 $stmt = $conn->prepare("select profile_picture from users where id = ".$_SESSION['userID']);
                 $stmt->execute();
-                $is_picture = false;
                 while($result = $stmt->fetch(PDO::FETCH_BOTH)){
                     echo "<img src='".$result[0]."' style=\"width:200px; height: 200px;\";/><br/><br/>";
                 }

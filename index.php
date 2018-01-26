@@ -91,6 +91,32 @@ if (isset($_GET['offer_id']) && isset($_GET['cancel'])) {
 }
 /* *** RESERVATION CANCEL END *** */
 
+/* add country */
+if (isset($_GET['new_coutry']) && isset($_POST['new_country_nazev'])) {
+    $stmt = $conn->prepare("INSERT INTO countries (nazev) VALUES ('" . $_POST['new_country_nazev'] . "')");
+    $stmt->execute();
+    unset($_GET['new_coutry']);
+    unset($_POST['new_country_nazev']);
+    header("Location: http://localhost/index.php?page=administration&table=destinations");
+}
+/* add country end */
+
+/* edit country */
+if (isset($_GET['edit_country']) && isset($_POST['new_country_name_id']) && isset($_POST['new_country_name'])) {
+    $stmt = $conn->prepare("UPDATE countries SET nazev='" . $_POST['new_country_name'] . "' WHERE id=" . $_POST['new_country_name_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations");
+}
+/* edit country end */
+
+/* delete country */
+if (isset($_GET['delete_country']) && isset($_GET['country_id'])) {
+    $stmt = $conn->prepare("DELETE FROM countries WHERE id=" . $_GET['country_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=destinations");
+}
+/* delete country end */
+
 ?>
 <!DOCTYPE html>
 <html>
