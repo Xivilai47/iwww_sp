@@ -43,6 +43,8 @@ function offersTable()
                         <input type='text' id='updated_offer_duration' name='updated_offer_duration' class='form-control' value='".$result[5]."'>
                     </td>
                     <td>
+                    </td>
+                    <td>
                         <button type='submit' class='btn btn-md btn-ghost'>Upravit</button>
                     </td>
                     <td style='text-align: center'>
@@ -99,12 +101,12 @@ function offersTable()
 <br/>
 <table class="table">
     <tr>
-        <th>ID nabídky</th>
-        <th>ID Místností</th>
+        <th width="50px">ID nabídky</th>
+        <th width="400px">ID Místností</th>
         <th>Rezervace uživatele</th>
         <th>Od</th>
         <th>Do</th>
-        <th>Dní</th>
+        <th width="70px">Dní</th>
         <th>Detail</th>
         <th>Upravit</th>
         <th>Odstranit</th>
