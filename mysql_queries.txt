@@ -12,9 +12,10 @@ PRIDANI DEFAULT
 ALTER TABLE users MODIFY COLUMN profile_picture VARCHAR(255) NOT NULL DEFAULT 'img/profile_pics/default.png' 
 ***
 POHLED pretty_offer2
-create or replace view pretty_offer2 AS 
-select o.id, concat(c.nazev, " > ", cit.nazev, " > ", h.nazev, " > ", o.ID_Room) as 'Zemì > Mìsto > Hotel > ID místnosti', o.user_ID as 'Zarezervovano uzivatelem', o.date_from as 'Od', o.date_to as 'Do', o.no_of_days as 'Dní', o.detail as 'Detail' from offers o join rooms r on r.ID = o.ID_Room join hotels h on h.ID = r.ID_Hotel join cities cit on cit.ID = h.city_ID join countries c on c.ID = cit.country_ID
+create or replace view pretty_offer2 AS select o.id, concat(r.ID, ' (', r.No_of_Beds, '-lA—A3kovA1 pokoj - ', h.NAZEV, ' (', cit.Nazev,'))') as 'pretty_room_id', o.user_ID as 'Zarezervovano uzivatelem', o.date_from as 'Od', o.date_to as 'Do', o.no_of_days as 'Dní', o.detail as 'Detail' from offers o join rooms r on r.ID = o.ID_Room join hotels h on h.ID = r.ID_Hotel join cities cit on cit.ID = h.city_ID join countries c on c.ID = cit.country_ID 
 ***
+DROP COLUMN
+ALTER TABLE tbl_Country DROP COLUMN IsDeleted;
 
 
 TODO:

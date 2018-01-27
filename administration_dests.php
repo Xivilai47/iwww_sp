@@ -281,7 +281,7 @@ function roomsTable()
     </div>
 </section>
 
-<!-- ***---MODALS---*** -->
+<!-- *** --- MODALS --- *** -->
 <!-- country -->
 <div id="new-country-modal" tabindex="-1" role="dialog" class="modal fade">
     <div class="modal-dialog modal-sm">

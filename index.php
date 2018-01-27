@@ -10,7 +10,12 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
-/* pripojeni k DB END*/
+
+/* VIEWS AND STUFF
+$stmt = $conn->prepare("create or replace view pretty_rooms as 
+SELECT concat(r.no_of_beds, '-lůžkový pokoj - ', h.nazev, ' (', c.Nazev, ')') as 'pokoj' from rooms r join hotels h on r.ID_Hotel = h.ID join cities c on c.ID = h.city_ID");
+$stmt->execute();
+*/
 
 /* LOGIN FCE */
 function login($loginName, $loginPwd)
@@ -34,13 +39,10 @@ function login($loginName, $loginPwd)
     }
 }
 
-/* LOGIN FCE END*/
-
 /* LOGIN CALL */
 if (isset($_POST['input_login_modal']) && isset($_POST['input_password_modal'])) {
     login($_POST['input_login_modal'], $_POST['input_password_modal']);
 }
-/* LOGIN CALL END */
 
 /* LOGOUT */
 if (isset($_GET['logout'])) {
@@ -51,7 +53,6 @@ if (isset($_GET['logout'])) {
     unset($_SESSION['uLogin']);
     unset($_SESSION['uRole']);
 }
-/* LOGOUT END */
 
 /* REGISTRATION */
 if (isset($_POST['reg_FirstName_modal']) &&
@@ -80,8 +81,6 @@ function addUser($firstName, $surname, $email, $login, $pwd)
     $stmt->execute();
 }
 
-/* REGISTRATION END */
-
 /* *** RESERVATION CANCEL *** */
 if (isset($_GET['offer_id']) && isset($_GET['cancel'])) {
     $stmt = $conn->prepare("UPDATE offers SET user_ID=NULL WHERE ID=" . $_GET['offer_id']);
@@ -89,7 +88,6 @@ if (isset($_GET['offer_id']) && isset($_GET['cancel'])) {
     header("Location: http://localhost/index.php?page=profile");
     die();
 }
-/* *** RESERVATION CANCEL END *** */
 
 /* add country */
 if (isset($_GET['new_coutry']) && isset($_POST['new_country_nazev'])) {
@@ -97,7 +95,6 @@ if (isset($_GET['new_coutry']) && isset($_POST['new_country_nazev'])) {
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
-/* add country end */
 
 /* edit country */
 if (isset($_GET['edit_country']) && isset($_POST['updated_country_id']) && isset($_POST['updated_country_name'])) {
@@ -105,7 +102,6 @@ if (isset($_GET['edit_country']) && isset($_POST['updated_country_id']) && isset
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
-/* edit country end */
 
 /* delete country */
 if (isset($_GET['delete_country']) && isset($_GET['country_id'])) {
@@ -113,7 +109,6 @@ if (isset($_GET['delete_country']) && isset($_GET['country_id'])) {
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_countries");
 }
-/* delete country end */
 
 /* add city */
 if (isset($_GET['new_city']) && isset($_POST['new_city_nazev']) && isset($_POST['new_city_country_id'])) {
@@ -121,7 +116,6 @@ if (isset($_GET['new_city']) && isset($_POST['new_city_nazev']) && isset($_POST[
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
 }
-/* add city end */
 
 /* edit city */
 if (isset($_GET['edit_city']) && isset($_POST['updated_city_id']) && isset($_POST['updated_city_name']) && isset($_POST['updated_city_country_id'])) {
@@ -129,7 +123,6 @@ if (isset($_GET['edit_city']) && isset($_POST['updated_city_id']) && isset($_POS
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
 }
-/* edit city end*/
 
 /* delete city */
 if (isset($_GET['delete_city']) && isset($_GET['city_id'])) {
@@ -137,7 +130,6 @@ if (isset($_GET['delete_city']) && isset($_GET['city_id'])) {
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_cities");
 }
-/* delete city end */
 
 /* add hotel */
 if (isset($_GET['new_hotel']) && isset($_POST['new_hotel_nazev']) && isset($_POST['new_hotel_city_id'])) {
@@ -145,7 +137,6 @@ if (isset($_GET['new_hotel']) && isset($_POST['new_hotel_nazev']) && isset($_POS
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
 }
-/* add hotel end */
 
 /* edit hotel */
 if (isset($_GET['edit_hotel']) && isset($_POST['updated_hotel_id']) && isset($_POST['updated_hotel_name']) && isset($_POST['updated_hotel_city_id'])) {
@@ -153,7 +144,6 @@ if (isset($_GET['edit_hotel']) && isset($_POST['updated_hotel_id']) && isset($_P
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
 }
-/* edit hotel end */
 
 /* delete hotel */
 if (isset($_GET['delete_hotel']) && isset($_GET['hotel_id'])) {
@@ -161,7 +151,6 @@ if (isset($_GET['delete_hotel']) && isset($_GET['hotel_id'])) {
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
 }
-/* delete hotel end */
 
 /* add room */
 if (isset($_GET['new_room']) && isset($_POST['new_room_no_of_beds']) && isset($_POST['new_room_price_night']) && isset($_POST['new_room_hotel_id'])) {
@@ -169,15 +158,13 @@ if (isset($_GET['new_room']) && isset($_POST['new_room_no_of_beds']) && isset($_
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
 }
-/* add room end */
 
 /* edit room */
 if (isset($_GET['edit_room']) && isset($_POST['updated_room_id']) && isset($_POST['updated_room_no_of_beds']) && isset($_POST['updated_room_price_night']) && isset($_POST['updated_room_hotel_id'])) {
-    $stmt = $conn->prepare("UPDATE rooms SET no_of_beds=" . $_POST['updated_room_no_of_beds'] . ", price_night=" . $_POST['updated_room_price_night'] . ", id_hotel=".$_POST['updated_room_hotel_id']." WHERE id=" . $_POST['updated_room_id']);
+    $stmt = $conn->prepare("UPDATE rooms SET no_of_beds=" . $_POST['updated_room_no_of_beds'] . ", price_night=" . $_POST['updated_room_price_night'] . ", id_hotel=" . $_POST['updated_room_hotel_id'] . " WHERE id=" . $_POST['updated_room_id']);
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
 }
-/* edit room end */
 
 /* delete room */
 if (isset($_GET['delete_room']) && isset($_GET['room_id'])) {
@@ -185,7 +172,20 @@ if (isset($_GET['delete_room']) && isset($_GET['room_id'])) {
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_rooms");
 }
-/* delete room end */
+
+/* add offer */
+if (isset($_GET['new_offer']) && isset($_POST['room_id']) && isset($_POST['date_from']) && isset($_POST['date_to'])) {
+    $stmt = $conn->prepare("INSERT INTO offers (id_room, date_from, date_to, no_of_days) VALUES (
+      " . $_POST['room_id'] . ", '" . $_POST['date_from'] . "', '" . $_POST['date_to'] . "', date_to-date_from+1)");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=offers");
+}
+
+/* edit offer */
+
+
+/* delete offer */
+
 
 ?>
 
