@@ -31,13 +31,13 @@ function citiesComboBox($selectVal)
 function hotelsComboBox($selectVal)
 {
     global $conn;
-    $stmt = $conn->prepare("SELECT id, nazev FROM hotels");
+    $stmt = $conn->prepare("SELECT h.id, h.nazev, co.nazev FROM hotels h JOIN cities c ON h.city_id = c.id JOIN countries co ON co.id = c.country_id");
     $stmt->execute();
     while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
         if ($result[0] === $selectVal) {
-            echo "<option value='" . $result[0] . "' selected>" . $result[1] . "</option>";
+            echo "<option value='" . $result[0] . "' selected>" . $result[1] . ", " . $result[2] . "</option>";
         } else {
-            echo "<option value='" . $result[0] . "'>" . $result[1] . "</option>";
+            echo "<option value='" . $result[0] . "'>" . $result[1] . ", " . $result[2] . "</option>";
         }
     }
 }
@@ -61,12 +61,12 @@ function countriesTable()
     while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
         echo "<tr>
                 <form action='index.php?page=administration&table=destinations&edit_country=true' method='post'>
-                    <td>" . $result[0] . "</td>
+                    <td style='text-align: center'>" . $result[0] . "</td>
                     <td>
                         <input type='hidden' id='updated_country_id' name='updated_country_id' value='" . $result[0] . "'>
                         <input type='text' id='updated_country_name' name='updated_country_name' value='" . $result[1] . "' class='form-control'>
                     </td>
-                    <td>
+                    <td style='text-align: center'>
                         <button type='submit' class='btn btn-md btn-ghost'>Upravit</button>
                     </td>
                     <td style='text-align: center'>
@@ -120,7 +120,7 @@ function hotelsTable()
                     <td>
                         <input type='hidden' id='updated_hotel_id' name='updated_hotel_id' value='" . $result[0] . "'>
                         <input type='text' id='updated_hotel_name' name='updated_hotel_name' value='" . $result[1] . "' class='form-control'>
-                    </td>
+                    </td>                  
                     <td>
                         <select id='updated_hotel_city_id' name='updated_hotel_city_id' class='dropdown form-control'>
                         ";
@@ -128,6 +128,9 @@ function hotelsTable()
         echo "
                         </select>
                     </td>
+                    <td>
+                        <input type='text' id='updated_hotel_base_room_price' name='updated_hotel_base_room_price' value='" . $result[3] . "' class='form-control'>
+                    </td> 
                     <td>
                         <button type='submit' class='btn btn-md btn-ghost'>Upravit</button>
                     </td>
@@ -175,6 +178,47 @@ function roomsTable()
 
 ?>
 
+<script>
+    function sortTable(id, dir) {
+        var table, rows, switching, i, x, y, elementx, inputx, elementy, inputy, shouldSwitch;
+        table = document.getElementById(id);
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.getElementsByTagName("tr");
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                elementx = rows[i].getElementsByTagName("td")[1];
+                inputx = elementx.getElementsByTagName("input")[1];
+                x = inputx.getAttribute("value");
+                elementy = rows[i + 1].getElementsByTagName("td")[1];
+                inputy = elementy.getElementsByTagName("input")[1];
+                y = inputy.getAttribute("value");
+                if (dir == "up") {
+                    if (x.toLowerCase() > y.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else {
+                    if (x.toLowerCase() < y.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    function searchInTable(id) {
+
+    }
+
+</script>
+
 <div class="breadcrumbs">
     <ul class="breadcrumb">
         <li><a href="#admin_countries">Země</a></li>
@@ -188,21 +232,32 @@ function roomsTable()
         <div class="col-md-8">
             <a name="admin_countries" class="anchor"><h3>Správa zemí</h3></a>
             <a href="#admin_top" class="breadcrumb">Nahoru</a><br/><br/>
-            <table class="table">
+            <table class="table" id="countriesTable">
                 <tr>
-                    <th> ID</th>
+                    <th style='text-align: center'> ID</th>
                     <th> Název</th>
-                    <th></th>
-                    <th></th>
+                    <th style='text-align: center'>Upravit</th>
+                    <th style="text-align: center;">Odstranit</th>
                 </tr>
                 <?php countriesTable(); ?>
                 <tr>
-                    <td colspan="4" style="text-align: center">
+                    <td colspan="4" style="text-align: center;">
                         <a href="#" data-toggle="modal" data-target="#new-country-modal" class="btn btn-ghost">Přidat
                             zemi</a>
                     </td>
                 </tr>
             </table>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <h3>Řazení & vyhledávání</h3>
+            </div>
+            <div class="row">
+                <div>
+                    <button onclick="sortTable('countriesTable', 'up')" class="btn btn-ghost">vzestupně</button>
+                    <button onclick="sortTable('countriesTable', 'down')" class="btn btn-ghost">sestupně</button>
+                </div>
+            </div>
         </div>
     </div>
     <hr/>
@@ -216,8 +271,8 @@ function roomsTable()
                     <th>ID</th>
                     <th width="270px">Název</th>
                     <th width="230px">Země</th>
-                    <th></th>
-                    <th></th>
+                    <th>Upravit</th>
+                    <th>Odstranit</th>
                 </tr>
                 <?php citiesTable(); ?>
                 <tr>
@@ -240,9 +295,10 @@ function roomsTable()
                 <tr>
                     <th>ID</th>
                     <th width="270px">Název</th>
-                    <th width="230px">Město</th>
-                    <th></th>
-                    <th></th>
+                    <th width="200px">Město</th>
+                    <th width="200px">Základní cena / lůžko</th>
+                    <th>Upravit</th>
+                    <th>Odstranit</th>
                 </tr>
                 <?php hotelsTable(); ?>
                 <tr>
@@ -264,10 +320,10 @@ function roomsTable()
                 <tr>
                     <th>ID</th>
                     <th width="100px">Počet lůžek</th>
-                    <th width="120px">Cena za noc</th>
+                    <th width="160px">Cena za lůžko / noc</th>
                     <th>Hotel</th>
-                    <th></th>
-                    <th></th>
+                    <th>Upravit</th>
+                    <th>Odstranit</th>
                 </tr>
                 <?php roomsTable(); ?>
                 <tr>
@@ -355,6 +411,11 @@ function roomsTable()
                         </select>
                     </div>
                     <div class="form-group">
+                        <h5>Zadejte základní cenu pokoje za lůžko: </h5>
+                        <input id="new_hotel_base_room_price" name="new_hotel_base_room_price" type="text"
+                               class="form-control">
+                    </div>
+                    <div class="form-group">
                         <button type="submit" class="btn btn-ghost">Vložit</button>
                     </div>
                 </form>
@@ -374,18 +435,18 @@ function roomsTable()
             <div class="modal-body">
                 <form action="index.php?page=administration&table=destinations&new_room=true" method="post">
                     <div class="form-group">
+                        <h5>Vyberte hotel: </h5>
+                        <select id="new_room_hotel_id" name="new_room_hotel_id" class="dropdown form-control">
+                            <?php hotelsComboBox(0); ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <h5>Počet lůžek: </h5>
                         <input id="new_room_no_of_beds" name="new_room_no_of_beds" type="text" class="form-control">
                     </div>
                     <div class="form-group">
                         <h5>Cena za noc: </h5>
                         <input id="new_room_price_night" name="new_room_price_night" type="text" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <h5>Vyberte hotel: </h5>
-                        <select id="new_room_hotel_id" name="new_room_hotel_id" class="dropdown form-control">
-                            <?php hotelsComboBox(0); ?>
-                        </select>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-ghost">Vložit</button>

@@ -1,3 +1,8 @@
+<!--TODO
+    - nakopčit sorty a searche do admin_dest
+    - profile pic
+    - výstpuní sestava
+-->
 <?php session_start();
 
 /* pripojeni k DB */
@@ -81,7 +86,14 @@ function addUser($firstName, $surname, $email, $login, $pwd)
     $stmt->execute();
 }
 
-/* *** RESERVATION CANCEL *** */
+/* make reservation */
+if (isset($_GET['offer_id']) && isset($_GET['make_reservation'])) {
+    $stmt = $conn->prepare("UPDATE offers SET user_id=" . $_SESSION['userID'] . " WHERE ID=" . $_GET['offer_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=offer_detail&offer_id=" . $_GET['offer_id']);
+}
+
+/* reservation cancel */
 if (isset($_GET['offer_id']) && isset($_GET['cancel'])) {
     $stmt = $conn->prepare("UPDATE offers SET user_ID=NULL WHERE ID=" . $_GET['offer_id']);
     $stmt->execute();
@@ -132,15 +144,15 @@ if (isset($_GET['delete_city']) && isset($_GET['city_id'])) {
 }
 
 /* add hotel */
-if (isset($_GET['new_hotel']) && isset($_POST['new_hotel_nazev']) && isset($_POST['new_hotel_city_id'])) {
-    $stmt = $conn->prepare("INSERT INTO hotels (nazev, city_id) VALUES ('" . $_POST['new_hotel_nazev'] . "', " . $_POST['new_hotel_city_id'] . ")");
+if (isset($_GET['new_hotel']) && isset($_POST['new_hotel_nazev']) && isset($_POST['new_hotel_city_id']) && isset($_POST['new_hotel_base_room_price'])) {
+    $stmt = $conn->prepare("INSERT INTO hotels (nazev, city_id, base_room_price) VALUES ('" . $_POST['new_hotel_nazev'] . "', " . $_POST['new_hotel_city_id'] . ", " . $_POST['new_hotel_base_room_price'] . ")");
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
 }
 
 /* edit hotel */
-if (isset($_GET['edit_hotel']) && isset($_POST['updated_hotel_id']) && isset($_POST['updated_hotel_name']) && isset($_POST['updated_hotel_city_id'])) {
-    $stmt = $conn->prepare("UPDATE hotels SET nazev='" . $_POST['updated_hotel_name'] . "', city_id=" . $_POST['updated_hotel_city_id'] . " WHERE id=" . $_POST['updated_hotel_id']);
+if (isset($_GET['edit_hotel']) && isset($_POST['updated_hotel_id']) && isset($_POST['updated_hotel_name']) && isset($_POST['updated_hotel_city_id']) && isset($_POST['updated_hotel_base_room_price'])) {
+    $stmt = $conn->prepare("UPDATE hotels SET nazev='" . $_POST['updated_hotel_name'] . "', city_id=" . $_POST['updated_hotel_city_id'] . ", base_room_price=" . $_POST['updated_hotel_base_room_price'] . " WHERE id=" . $_POST['updated_hotel_id']);
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=destinations#admin_hotels");
 }
@@ -176,18 +188,67 @@ if (isset($_GET['delete_room']) && isset($_GET['room_id'])) {
 /* add offer */
 if (isset($_GET['new_offer']) && isset($_POST['room_id']) && isset($_POST['date_from']) && isset($_POST['date_to'])) {
     $stmt = $conn->prepare("INSERT INTO offers (id_room, date_from, date_to, no_of_days) VALUES (
-      " . $_POST['room_id'] . ", '" . $_POST['date_from'] . "', '" . $_POST['date_to'] . "', date_to-date_from+1)");
+      " . $_POST['room_id'] . ", '" . $_POST['date_from'] . "', '" . $_POST['date_to'] . "', date_to-date_from)");
     $stmt->execute();
     header("Location: http://localhost/index.php?page=administration&table=offers");
 }
 
 /* edit offer */
-
+if (isset($_GET['edit_offer']) && isset($_POST['updated_offer_id']) && isset($_POST['updated_offer_room_id']) && isset($_POST['updated_offer_reserved_by']) && isset($_POST['updated_offer_date_from']) && isset($_POST['updated_offer_date_to'])) {
+    if($_POST['updated_offer_reserved_by'] == ''){
+        $_POST['updated_offer_reserved_by'] = 'null';
+    }
+    $stmt = $conn->prepare("UPDATE offers SET id_room=" . $_POST['updated_offer_room_id'] . ", user_id=" . $_POST['updated_offer_reserved_by'] . ", date_from='" . $_POST['updated_offer_date_from'] . "', date_to='" . $_POST['updated_offer_date_to'] . "', no_of_days=datediff(date_to, date_from) WHERE id=" . $_POST['updated_offer_id'] . "");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=offers");
+}
 
 /* delete offer */
+if (isset($_GET['delete_offer']) && isset($_GET['offer_id'])) {
+    $stmt = $conn->prepare("DELETE FROM offers WHERE id=" . $_GET['offer_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=offers");
+}
 
+/* edit user */
+if (isset($_GET['edit_user']) && isset($_POST['updated_user_id']) && isset($_POST['updated_user_Fname']) && isset($_POST['updated_user_Surname']) && isset($_POST['updated_user_email']) && isset($_POST['updated_user_role_id'])) {
+    $stmt = $conn->prepare("UPDATE users SET First_name='" . $_POST['updated_user_Fname'] . "', surname='" . $_POST['updated_user_Surname'] . "', email='" . $_POST['updated_user_email'] . "', role_id=" . $_POST['updated_user_role_id'] . " WHERE id=" . $_POST['updated_user_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=users");
+}
+
+/* delete user */
+if (isset($_GET['delete_user']) && isset($_GET['user_id'])) {
+    $stmt = $conn->prepare("DELETE FROM users WHERE id=" . $_GET['user_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=administration&table=users");
+}
+
+/* edit offer desc */
+if(isset($_GET['edit_offer_desc']) && isset($_GET['offer_id']) && isset($_POST['edit_offer_desc'])){
+    $stmt = $conn->prepare("update offers set detail='".$_POST['edit_offer_desc']."' where id=".$_GET['offer_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=offer_detail&offer_id=".$_GET['offer_id']);
+}
+
+/* edit destination desc */
+if(isset($_GET['edit_dest_desc']) && isset($_GET['offer_id']) && isset($_POST['edit_dest_desc'])){
+    $stmt = $conn->prepare("update pretty_offer set description='".$_POST['edit_dest_desc']."' where id=".$_GET['offer_id']);
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=offer_detail&offer_id=".$_GET['offer_id']);
+}
+
+/* add comment to dest */
+if(isset($_POST['new_comment_hotel_id']) && isset($_POST['new_comment']) && isset($_POST['new_comment_hodnoceni'])){
+    $stmt = $conn->prepare("insert into comments (comment, user_id, hotel_id, hodnoceni) values 
+        ('".$_POST['new_comment']."', ".$_SESSION['userID'].", ".$_POST['new_comment_hotel_id'].", ".$_POST['new_comment_hodnoceni'].")");
+    $stmt->execute();
+    header("Location: http://localhost/index.php?page=offer_detail&offer_id=".$_GET['offer_id']);
+}
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -342,7 +403,6 @@ if (isset($_GET['new_offer']) && isset($_POST['room_id']) && isset($_POST['date_
 </div>
 
 <!-- *** LOGIN MODAL END ***-->
-
 <?php
 if (isset($_GET['page'])) {
     switch ($_GET['page']) {
@@ -362,7 +422,22 @@ if (isset($_GET['page'])) {
             include_once 'offers.php';
             break;
         case 'offer_detail';
-            include_once 'offer_detail.php';
+            if (isset($_GET['offer_id'])) {
+                $stmt = $conn->prepare("SELECT id FROM offers");
+                $stmt->execute();
+                $pageLoaded = false;
+                while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
+                    if ($result[0] == $_GET['offer_id']) {
+                        $pageLoaded = true;
+                        include_once 'offer_detail.php';
+                        break;
+                    }
+                }
+                if (!$pageLoaded) {
+                    include_once '404.php';
+                    break;
+                }
+            }
             break;
         case 'administration':
             include_once 'administration.php';
@@ -419,3 +494,4 @@ if (isset($_GET['page'])) {
 </script>
 </body>
 </html>
+

@@ -5,7 +5,7 @@ function roomsComboBox($selectVal)
     $stmt = $conn->prepare("SELECT * FROM pretty_rooms");
     $stmt->execute();
     while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
-        if ($result[0] === $selectVal) {
+        if ($result[0] == $selectVal) {
             echo "<option value='" . $result[0] . "' selected>" . $result[1] . "</option>";
         } else {
             echo "<option value='" . $result[0] . "'>" . $result[1] . "</option>";
@@ -15,13 +15,15 @@ function roomsComboBox($selectVal)
 
 function offersTable()
 {
+    $query_new = "select o.id, ' ', o.user_id, o.date_from, o.date_to, o.no_of_days, ' ', o.id_room, po.price from offers o join pretty_offer po on po.id = o.ID";
     global $conn;
-    $stmt = $conn->prepare("SELECT *, substr(pretty_room_id, 1, 1) FROM pretty_offer2");
+    $stmt = $conn->prepare($query_new);
     $stmt->execute();
+    $res5 = 'poznamka';
     while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
         echo "<tr>
                 <form action='index.php?page=administration&table=offers&edit_offer=true' method='post'>
-                    <td>" . $result[0] . "</td>
+                    <td style='vertical-align: middle; text-align: center;'>" . $result[0] . "</td>
                     <td>
                         <input type='hidden' id='updated_offer_id' name='updated_offer_id' value='" . $result[0] . "'>
                         <select id='updated_offer_room_id' name='updated_offer_room_id' class='dropdown form-control'>
@@ -39,19 +41,22 @@ function offersTable()
                     <td>
                         <input type='date' id='updated_offer_date_to' name='updated_offer_date_to' class='form-control' value='" . $result[4] . "'>
                     </td>
+                    <td style='vertical-align: middle; text-align: center;'>" . $result[5] . "</td>
                     <td>
-                        <input type='text' id='updated_offer_duration' name='updated_offer_duration' class='form-control' value='".$result[5]."'>
-                    </td>
-                    <td>
+                    <a href='http://localhost/index.php?page=offer_detail&offer_id=".$result[0]."' class='btn btn-ghost'>Detail</a>
                     </td>
                     <td>
                         <button type='submit' class='btn btn-md btn-ghost'>Upravit</button>
                     </td>
                     <td style='text-align: center'>
-                        <a href='index.php?page=administration&table=destinations&delete_country=true&country_id=" . $result[0] . "' class='btn btn-md btn-danger'>x</a>
+                        <a href='index.php?page=administration&table=destinations&delete_offer=true&offer_id=" . $result[0] . "' class='btn btn-md btn-danger'>x</a>
                     </td>
                 </form>
-              </tr>";
+              </tr>
+              <tr>
+                <td colspan='9' style='text-align: center; border-top: none;'> Celková cena nabídky: <b>".$result[8]." Kč</b></td>
+              </tr>
+              ";
     }
 }
 
@@ -147,10 +152,8 @@ function offersTable()
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM pretty_rooms");
                             $stmt->execute();
-                            $i = 0;
                             while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
-                                echo "<option value=" . $i . ">" . $result[0] . "</option>";
-                                $i++;
+                                echo "<option value=" . $result[0] . ">" . $result[1] . "</option>";
                             }
                             ?>
                         </select>
