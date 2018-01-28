@@ -1,6 +1,11 @@
 ***
 POHLED pretty_offer
-create or replace view pretty_offer AS select o.id as 'Offer_ID', c.nazev as 'Country', cit.nazev as 'City', h.nazev as 'Hotel', r.no_of_beds as 'No_of_Beds', date_format(o.date_from, "%e. %c. %Y") as 'From', date_format(o.date_to, "%e. %c. %Y") as 'To', r.price_night * o.no_of_days as 'Price', o.user_ID as 'Reserved_by' from offers o join rooms r on o.ID_Room = r.ID join hotels h on r.ID_Hotel = h.ID join cities cit on cit.ID = h.city_ID join countries c on c.ID = cit.country_ID 
+create or replace view pretty_offer AS 
+select o.id, c.nazev as 'country', cit.nazev as 'city', h.nazev as 'hotel', r.no_of_beds, date_format(o.date_from, "%e. %c. %Y") as 'od', date_format(o.date_to,  "%e. %c. %Y") as 'do', (r.No_of_Beds * (h.base_room_price + o.no_of_days * r.Price_Night)) as 'price', o.user_id, o.detail, h.description from offers o
+join rooms r on o.ID_Room = r.ID
+join hotels h on r.ID_Hotel = h.ID
+join cities cit on h.city_ID = cit.ID
+join countries c on cit.country_ID = c.ID
 ***
 PRIDANI FK
 ALTER TABLE `hotels` ADD CONSTRAINT `hotels_ibfk_1` FOREIGN KEY (`ID_Country`) REFERENCES `hotels`(`ID`);
@@ -16,7 +21,14 @@ create or replace view pretty_offer2 AS select o.id, concat(r.ID, ' (', r.No_of_
 ***
 DROP COLUMN
 ALTER TABLE tbl_Country DROP COLUMN IsDeleted;
+***
+POHLED pretty_rooms
+create or replace view pretty_rooms as
+select r.id as 'room_id', concat(r.no_of_beds, '-lA—A3kovA1 pokoj - ', h.nazev, ' (', c.nazev, ')') as 'pokoj' from rooms r join hotels h on h.ID = r.ID_Hotel join cities c on c.ID = h.city_ID
 
+***
+select na commenty
+select users.First_name, users.Surname, users.login, comment, created, hodnoceni from comments join users on comments.user_ID = users.id
 
 TODO:
 z offers lze vyškrtnout sloupec "reserved" - lze øešit rozhodováním, zda je user_ID null nebo ne

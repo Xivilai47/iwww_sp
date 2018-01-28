@@ -1,0 +1,19 @@
+.anchor {
+    padding-top: 100px;
+}
+
+td {
+    text-align: left;
+}
+
+.hotel-img{
+    width: 500px;
+    height: 300px;
+    box-shadow: 5px 5px 5px 0 #f7f7f7 inset,
+                -5px -5px 5px 0 #f7f7f7 inset;
+    background-size: 500px 300px;
+}
+
+ul{
+    list-style-type: none;
+}
