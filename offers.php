@@ -22,41 +22,10 @@ function loadComboBox($loadWhat)
     }
 }
 
-function flagSelector($zeme)
-{
-    $imgPath = '';
-    switch ($zeme) {
-        case 'Bali':
-            $imgPath = "img/flags/bali_flag.jpg";
-            break;
-        case 'Austrálie':
-            $imgPath = "img/flags/australian_flag.jpg";
-            break;
-        case 'Finsko':
-            $imgPath = "img/flags/finland_flag.jpg";
-            break;
-        case 'Španělsko':
-            $imgPath = "img/flags/spain_flag.jpg";
-            break;
-        case 'Itálie':
-            $imgPath = "img/flags/italy_flag.jpg";
-            break;
-        case 'Francie':
-            $imgPath = "img/flags/france_flag.jpg";
-            break;
-        case 'Řecko':
-            $imgPath = "img/flags/greece_flag.jpg";
-            break;
-        case 'Velká Británie':
-            $imgPath = "img/flags/uk_flag.jpg";
-            break;
-        case 'USA':
-            $imgPath = "img/flags/usa_flag.jpg";
-            break;
-    }
-    return $imgPath;
+$searchHotel='';
+if(isset($_GET['pre_filter'])){
+    $searchHotel = $_GET['pre_filter'];
 }
-
 ?>
 
 <section class="background-gray-lightest">
@@ -75,10 +44,10 @@ function flagSelector($zeme)
             <table class="table">
                 <tr>
                     <td colspan="7" style="border-top: none; border-bottom: solid 1px lightgray; text-align: center;">
-                        <h1>Vyhledávání</h1>
+                        <h2>Vyhledávání</h2>
                         <input type="text" id="search_By_Country" onkeyup="searchByCountry()" placeholder="Hledat dle země...">
                         <input type="text" id="search_By_City" onkeyup="searchByCity()" placeholder="Hledat dle města...">
-                        <input type="text" id="search_By_Name" onkeyup="searchByName()" placeholder="Hledat dle názvu hotelu...">
+                        <input type="text" id="search_By_Name" onkeyup="searchByName()" placeholder="Hledat dle názvu hotelu..." value="<?php echo $searchHotel?>">
                     </td>
                 </tr>
             </table>
@@ -141,19 +110,23 @@ function flagSelector($zeme)
     <div class="container">
         <ul id="searchableUL">
             <?php
-            $stmt = $conn->prepare("SELECT * FROM pretty_offer where user_id is null");
+            $stmt = $conn->prepare("select *, isnull(pretty_offer.user_id) as rezervovano from pretty_offer");
             $stmt->execute();
             while ($result = $stmt->fetch(PDO::FETCH_BOTH)) {
                 echo "
                     <li>
-                        <div class=\"col-sm-3\">
-                            <div class=\"post background-gray-lighter\">
-                                <div class=\"image\">
+                        <div class='col-sm-3'>
+                            <div class='post background-gray-lighter offer'>
+                                <div class=\"image\">";
+                            if($result[12] == 0){
+                                echo "<p class='btn alert-danger' style='position: absolute; left: 40px; top: 65px'>JIŽ REZERVOVÁNO</p>";
+                            }
+                            echo "
                                     <a href=\"http://localhost/index.php?page=offer_detail&offer_id=" . $result[0] . "\">
-                                        <img src='img/hotel_thumbnails/" . $result[3] . ".jpg' style=\"height: 170px; width: 250px;\">
+                                        <img src='img/hotel_thumbnails/" . $result[3] . ".jpg' style=\"width: 250px; height: 170px;\">
                                     </a>
                                 </div>
-                                <h3 style=\"margin-bottom: 10px;\">" . $result[3] . "</h3>
+                                <h3 style=\"margin-bottom: 10px; height: 55px;\"><a href=\"http://localhost/index.php?page=offer_detail&offer_id=" . $result[0] . "\">" . $result[3] . "</a></h3>
                                 <p><img src='" . flagSelector($result[1]) . "' style=\"height: 30px; width: 50px;\" alt='" . $result[1] . "'><b> " . $result[2] . "</b></p>
                                 <b>$result[5] - $result[6]</b><br/>
                                 <b>Pro $result[4] osoby</b><br/>";
@@ -162,7 +135,7 @@ function flagSelector($zeme)
                                 $result2 = $stmt2->fetch(PDO::FETCH_BOTH);
                                 switch($result2[1]){
                                     case ($result2[1] >= 9):
-                                        echo "Hodnocení hotelu: <b style='color: green; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
+                                        echo "Hodnocení hotelu: <b style='color: lightgreen; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
                                         break;
                                     case ($result2[1] >= 8):
                                         echo "Hodnocení hotelu: <b style='color: greenyellow; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
@@ -171,13 +144,13 @@ function flagSelector($zeme)
                                         echo "Hodnocení hotelu: <b style='color: yellow; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
                                         break;
                                     case ($result2[1] >= 6):
-                                        echo "Hodnocení hotelu: <b style='color: orange; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
+                                        echo "Hodnocení hotelu: <b style='color: #ffbb00; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
                                         break;
                                     case ($result2[1] >= 5):
-                                        echo "Hodnocení hotelu: <b style='color: orangered; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
+                                        echo "Hodnocení hotelu: <b style='color: #ff8800; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
                                         break;
-                                    case 'default':
-                                        echo "Hodnocení hotelu: <b style='color: red; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
+                                    case ($result2[1] < 5):
+                                        echo "Hodnocení hotelu: <b style='color: #ff4444; text-shadow: 0 0 1px #000, 0 0 1px #000;'>$result2[1]</b>";
                                         break;
                                 }
                                 echo "
@@ -194,3 +167,7 @@ function flagSelector($zeme)
         </ul>
     </div>
 </section>
+
+<script>
+    searchByName();
+</script>

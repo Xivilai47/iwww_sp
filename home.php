@@ -7,82 +7,87 @@
     </ol>
     <!-- Wrapper for slides-->
     <div role="listbox" class="carousel-inner">
-        <div style="background-image: url('img/carousel3.jpg');" class="item active">
+        <div style="background-image: url('img/carousel/1.jpg');" class="item active">
             <div class="overlay"></div>
             <div class="carousel-caption">
-                <h1 class="super-heading">ěĚšŠčČřŘžŽýÝáÁíÍéÉúÚůŮ</h1>
-                <p class="super-paragraph">A multi-purpose Bootstrap template by <a href="https://bootstrapious.com">Bootstrapious.com</a>.</p>
+                <h1 class="super-heading">SUNSET TRAVEL</h1>
+                <p class="super-paragraph">Cestujte kdy chcete a kam chcete</a>
+                </p>
             </div>
         </div>
-        <div style="background-image: url('img/carousel2.jpg');" class="item">
+        <div style="background-image: url('img/carousel/2.jpg');" class="item">
             <div class="overlay"></div>
             <div class="carousel-caption">
-                <h1 class="super-heading">Motivační nadpis 1</h1>
-                <p>Motivační teeeeeeeeeeeeeee eeeeeee eee eeeeeeee eee ee eee eeee eeeeeeee eee eeeee eeeeeee eeee eeeeeee ee eeee ee eeee eeeeee ee eeeeee e eeeee eee ee eeeee eeeee ee e eeeeeeeee eeee eeeee e ee ee eee eeeee e e eeee e e e eeeee eeeee eeee ee eee eeeee eeee eeeee ee ext 1</p>
+                <h1 class="super-heading">Poznejte kulturu za hranicemi</h1>
             </div>
         </div>
-        <div style="background-image: url('img/carousel1.jpg');" class="item">
+        <div style="background-image: url('img/carousel/3.jpg');" class="item">
             <div class="overlay"></div>
             <div class="carousel-caption">
-                <h1 class="super-heading">Lorem ipsum dolor color</h1>
-                <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+                <h1 class="super-heading">A nebo se jen válejte na pláži...</h1>
             </div>
         </div>
     </div>
 </div>
 <section class="background-gray-lightest negative-margin">
     <div class="container">
-        <h1> O nás...</h1>
-        <p class="lead">Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat.</p>
-        <p> <a href="?page=onas" class="btn btn-ghost">Číst dále...</a></p>
+        <h2>SUNSET TRAVEL</h2>
+        <p class="lead">...není obyčejná cestovní kancelář.
+            Máme originální techniky, díky kterým vám můžeme zprostředkovat tu nejlepší dovolenou,
+            kterou jste kdy zažili. Nevěříte? Přesvědčte se sami! </p>
+        <p><a href="?page=onas" class="btn btn-ghost">Číst dále...</a></p>
     </div>
 </section>
 <section class="section--padding-bottom-small">
     <div class="container">
-        <h1> Z naší nabídky...</h1>
+        <h1> Nejlépe hodnocené destinace...</h1>
         <div class="row">
-            <div class="col-sm-6">
-                <div class="post">
-                    <div class="image"><a href="onas.php"><img src="img/blog4.jpg" alt="" class="img-responsive"></a></div>
-                    <h3><a href="onas.php">Rit eget tincidunt condimentum</a></h3>
-                    <p class="post__intro">ellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-                    <p class="read-more"><a href="onas.php" class="btn btn-ghost">Continue reading   </a></p>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="post">
-                    <div class="image"><a href="onas.php"><img src="img/blog5.jpg" alt="" class="img-responsive"></a></div>
-                    <h3><a href="onas.php">Tempor sit amet</a></h3>
-                    <p class="post__intro"> Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.</p>
-                    <p class="read-more"><a href="onas.php" class="btn btn-ghost">Continue reading   </a></p>
-                </div>
-            </div>
+            <?php
+            $stmt = $conn->prepare("SELECT * FROM hotels_w_rating ORDER BY hodnoceni DESC LIMIT 5");
+            $stmt->execute();
+            for ($i = 0; $i < 2; $i++) {
+                $result = $stmt->fetch(PDO::FETCH_BOTH);
+                echo "
+                    <div class='col-sm-6'>
+                        <div class='post'>
+                            <div class='image'>
+                                <a href='index.php?page=offers&pre_filter=" . $result[1] . "'>
+                                    <img src='img/hotel_thumbnails/" . $result[1] . ".jpg' style=\" width: 555px; height: 370px;\">
+                                </a>
+                            </div>
+                            <h3><a href='index.php?page=offers&pre_filter=" . $result[1] . "'>" . $result[1] . "</a></h3>
+                            <p><img src='" . flagSelector($result[6]) . "' style='height: 30px; width: 50px;' alt='" . $result[6] . "'><b> " . $result[2] . "</b></p>
+                            <p class='post-content'>";
+                                cutStringAtLastCommaOrPeriodBeforeN($result[4], 400);
+                            echo "</p>
+                            <p><a href='index.php?page=offers&pre_filter=" . $result[1] . "' class='btn btn-lg btn-ghost'>Zobrazit nabídky</a></p>
+                        </div>
+                    </div>";
+            }
+            ?>
         </div>
         <div class="row">
-            <div class="col-sm-4">
-                <div class="post">
-                    <div class="image"><a href="onas.php"><img src="img/blog1.jpg" alt="" class="img-responsive"></a></div>
-                    <h3><a href="onas.php">Rit eget tincidunt condimentum</a></h3>
-                    <p class="post__intro">ellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-                    <p class="read-more"><a href="onas.php" class="btn btn-ghost">Continue reading     </a></p>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="post">
-                    <div class="image"><a href="onas.php"><img src="img/blog2.jpg" alt="" class="img-responsive"></a></div>
-                    <h3><a href="onas.php">Tempor sit amet</a></h3>
-                    <p class="post__intro"> Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.</p>
-                    <p class="read-more"><a href="onas.php" class="btn btn-ghost">Continue reading     </a></p>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="post">
-                    <div class="image"><a href="onas.php"><img src="img/blog3.jpg" alt="" class="img-responsive"></a></div>
-                    <h3><a href="onas.php">Vestibulum erat wisi</a></h3>
-                    <p class="post__intro">ellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-                    <p class="read-more"><a href="onas.php" class="btn btn-ghost">Continue reading     </a></p>
-                </div>
-            </div>
+            <?php
+            for ($i = 0; $i < 3; $i++) {
+                $result = $stmt->fetch(PDO::FETCH_BOTH);
+                echo "
+                    <div class='col-sm-4'>
+                        <div class='post'>
+                            <div class='image'>
+                                <a href='index.php?page=offers&pre_filter=" . $result[1] . "'>
+                                    <img src='img/hotel_thumbnails/" . $result[1] . ".jpg' style=\" width: 360px; height: 240px;\">
+                                </a>
+                            </div>
+                            <h3><a href='index.php?page=offers&pre_filter=" . $result[1] . "'>" . $result[1] . "</a></h3>
+                            <p><img src='" . flagSelector($result[6]) . "' style='height: 30px; width: 50px;' alt='" . $result[6] . "'><b> " . $result[2] . "</b></p>
+                            <p class='post-content'>";
+                                cutStringAtLastCommaOrPeriodBeforeN($result[4], 300);
+                            echo "</p>
+                            <p><a href='index.php?page=offers&pre_filter=" . $result[1] . "' class='btn btn-sm btn-ghost'>Zobrazit nabídky</a></p>
+                        </div>
+                    </div>";
+            }
+            ?>
         </div>
     </div>
 </section>
@@ -91,94 +96,36 @@
     <div class="container clearfix">
         <div class="row services">
             <div class="col-md-12">
-                <h2>Services</h2>
-                <p class="lead margin-bottom--medium"> Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+                <h2>Na cestách...</h2>
+                <p class="lead margin-bottom--medium">Všechny vozy našich partnerských dopravců nabízejí
+                nadstandartní služby v oblasti cestování. Vše pak dokonale dokreslí profesionálně vyškolený
+                personál.</p>
                 <div class="row">
-                    <div class="col-sm-4">
-                        <div class="box box-services">
-                            <div class="icon"><i class="pe-7s-alarm"></i></div>
-                            <h4 class="services-heading">Webdesign</h4>
-                            <p>Fifth abundantly made Give sixth hath. Cattle creature i be don't them.</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="box box-services">
-                            <div class="icon"><i class="pe-7s-cloud"></i></div>
-                            <h4 class="services-heading">Print</h4>
-                            <p>Advantage old had otherwise sincerity dependent additions. It in adapted natural.</p>
-                        </div>
-                    </div>
                     <div class="col-sm-4">
                         <div class="box box-services">
                             <div class="icon"><i class="pe-7s-coffee"></i></div>
-                            <h4 class="services-heading">SEO and SEM</h4>
-                            <p>Am terminated it excellence invitation projection as. She graceful shy. </p>
+                            <h4 class="services-heading">Palubní občerstvení</h4>
+                            <p>Všechny vozy našich partnerských dopravců disponují širokou škálou očerstvení,
+                            které Vám personál obstará kdykoliv si zamanete.</p>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-sm-4">
                         <div class="box box-services">
                             <div class="icon"><i class="pe-7s-monitor"></i></div>
-                            <h4 class="services-heading">Consulting</h4>
-                            <p>Fifth abundantly made Give sixth hath. Cattle creature i be don't them.</p>
+                            <h4 class="services-heading">Zábavní termilály</h4>
+                            <p>Cesta na dovolenou je dlouhá a nemůžete se dočkat? Zkraťte si cestu poslechem hudby,
+                                filmem či videohrou!</p>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="box box-services">
                             <div class="icon"><i class="pe-7s-signal"></i></div>
-                            <h4 class="services-heading">Email Marketing</h4>
-                            <p>Advantage old had otherwise sincerity dependent additions. It in adapted natural.</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="box box-services">
-                            <div class="icon"><i class="pe-7s-id"></i></div>
-                            <h4 class="services-heading">UX &amp; UI</h4>
-                            <p>Am terminated it excellence invitation projection as. She graceful shy. </p>
+                            <h4 class="services-heading">Wi-Fi</h4>
+                            <p>V dnešní době je připojení k wi-fi téměř kdekoliv, i tak ale stále není samozřejmostí.
+                            Nebo ano? U nás určitě ANO!</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--   *** SERVICES END ***-->
-<!-- portfolio-->
-<section id="portfolio" class="section--no-padding-bottom">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <h1>Gallery or portfolio</h1>
-                <p class="lead margin-bottom--big">You can make also a portfolio or image gallery.</p>
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row no-space">
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-1.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 1"><img src="img/portfolio-1.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-2.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 2"><img src="img/portfolio-2.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-3.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 3"><img src="img/portfolio-3.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-4.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 4"><img src="img/portfolio-4.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-5.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 5"><img src="img/portfolio-5.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-6.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 6"><img src="img/portfolio-6.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-7.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 7"><img src="img/portfolio-7.jpg" alt="" class="img-responsive"></a></div>
-            </div>
-            <div class="col-lg-3 col-sm-4 col-xs-6">
-                <div class="box"><a href="img/portfolio-8.jpg" title="" data-lightbox="portfolio" data-title="Portfolio image 8"><img src="img/portfolio-8.jpg" alt="" class="img-responsive"></a></div>
             </div>
         </div>
     </div>

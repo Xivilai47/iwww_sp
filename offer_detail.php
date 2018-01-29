@@ -16,47 +16,12 @@ if (isset($_GET['offer_id'])) {
     $hotel_id = $result[11];
 }
 
-function flagSelector($zeme)
-{
-    $imgPath = '';
-    switch ($zeme) {
-        case 'Bali':
-            $imgPath = "img/flags/bali_flag.jpg";
-            break;
-        case 'Austrálie':
-            $imgPath = "img/flags/australian_flag.jpg";
-            break;
-        case 'Finsko':
-            $imgPath = "img/flags/finland_flag.jpg";
-            break;
-        case 'Španělsko':
-            $imgPath = "img/flags/spain_flag.jpg";
-            break;
-        case 'Itálie':
-            $imgPath = "img/flags/italy_flag.jpg";
-            break;
-        case 'Francie':
-            $imgPath = "img/flags/france_flag.jpg";
-            break;
-        case 'Řecko':
-            $imgPath = "img/flags/greece_flag.jpg";
-            break;
-        case 'Velká Británie':
-            $imgPath = "img/flags/uk_flag.jpg";
-            break;
-        case 'USA':
-            $imgPath = "img/flags/usa_flag.jpg";
-            break;
-    }
-    return $imgPath;
-}
-
 ?>
 
 <script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
 <script type="text/javascript">
     tinymce.init({
-        selector: 'textarea',
+        selector: 'textarea#new_comment',
         toolbar1: 'removeformat',
     })
 </script>
@@ -87,6 +52,12 @@ function flagSelector($zeme)
                     } else {
                         echo "zarezervováno";
                     } ?></p>
+                <p class="lead"><b>Hodnocení uživatelů: </b><?php
+                        $stmt = $conn->prepare("select hotel_id, format(avg(hodnoceni),1) from comments where hotel_id=".$result[11]);
+                        $stmt->execute();
+                        $result = $stmt->fetch(PDO::FETCH_BOTH);
+                        echo $result[1];
+                    ?></p>
                 <p class="lead"
                    style="text-align: right; color: red; font-size: 40px; font-weight: bolder"><?php echo $cena . " Kč"; ?></p>
                 <?php
@@ -107,7 +78,7 @@ function flagSelector($zeme)
                         }
                     } else {
                         echo "<a href='index.php?page=offer_detail&make_reservation=true&offer_id=" . $_GET['offer_id'] . "'
-                                 class='btn btn-ghost'>Zarezervovat!</a>";
+                                 class='btn btn-lg btn-ghost'>Zarezervovat!</a>";
                     }
                 }
                 ?>
@@ -120,24 +91,6 @@ function flagSelector($zeme)
         <br/><br/>
 
         <!-- POPISY -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Popis nabídky: </h3>
-                <?php
-                if (!empty($detail_nabidky)) {
-                    echo "<p class='lead'>" . $detail_nabidky . "</p>";
-                } else {
-                    echo "<p class='lead text-danger'>K této nabídce zatím neexistuje žádný popis.</p>";
-                }
-                if (isset($_SESSION['uRole'])) {
-                    if ($_SESSION['uRole'] == 'Admin') {
-                        echo "<a href='#' class='btn btn-ghost' data-toggle='modal' data-target='#edit-offer-desc-modal'>upravit popis</a>";
-                    }
-                }
-                ?>
-            </div>
-        </div>
-        <br/><br/>
         <div class="row">
             <div class="col-lg-12">
                 <h3>Popis destinace: </h3>
@@ -181,11 +134,11 @@ function flagSelector($zeme)
             </div>
         </div>
 
-        <!-- KOMENTÁŘE -->
+        <!-- HODNOCENÍ -->
         <div class="row">
             <div class="col-lg-12">
                 <br/><br/>
-                <h3>Komentáře</h3>
+                <h3>Hodnocení uživatelů</h3>
             </div>
         </div>
         <?php
@@ -223,16 +176,17 @@ function flagSelector($zeme)
         }
         ?>
         <div class="row">
-            <h4>Přidat komentář...</h4>
+            <h4>Přidat hodnocení...</h4>
             <div class="col-md-12">
                 <textarea id="new_comment" name="new_comment" form="new_comment_form">
-
                 </textarea>
+                <br/>
             </div>
             <form id="new_comment_form" method="post" action="index.php?page=offer_detail&offer_id=<?php echo $_GET['offer_id']?>">
                 <input type="hidden" value="<?php $_GET['offer_id']?>" id="new_comment_offer_id" name="new_comment_offer_id">
                 <input type="hidden" value="<?php echo $hotel_id?>" id="new_comment_hotel_id" name="new_comment_hotel_id">
-                <input type="number" id="new_comment_hodnoceni" name="new_comment_hodnoceni" placeholder="Hodnocení destinace (0 - 10)" min="0" max="10" required>
+                <label class="btn">Hodnocení destinace (0 - 10)</label>
+                <input type="number" id="new_comment_hodnoceni" name="new_comment_hodnoceni" min="0" max="10" class="btn" required>
                 <input type="submit" value="Vložit" class="btn btn-ghost">
             </form>
         </div>

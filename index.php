@@ -1,8 +1,3 @@
-<!--TODO
-    - nakopčit sorty a searche do admin_dest
-    - profile pic
-    - výstpuní sestava
--->
 <?php session_start();
 
 /* pripojeni k DB */
@@ -246,8 +241,88 @@ if(isset($_POST['new_comment_hotel_id']) && isset($_POST['new_comment']) && isse
     header("Location: http://localhost/index.php?page=offer_detail&offer_id=".$_GET['offer_id']);
 }
 
-?>
+function arrayToXml($xml) {
+    require_once 'XML/Serializer.php';
+    $options = array("addDecl" => true, "defaultTagName" => "Rezervace", "linebreak" => "", "encoding" => "UTF-8", "rootName" => "Seznam");
+    $serializer = new XML_Serializer($options);
+    $serializer->serialize($xml);
 
+    $file = 'rezervace.xml';
+    $myfile = fopen($file, "w") or die("Unable to open file!");
+    $txt = $serializer->getSerializedData();
+    fwrite($myfile, $txt);
+    fclose($myfile);
+
+
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . basename($file) . '"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+}
+
+/* download xml */
+if(isset($_GET['download_xml'])){
+    $stmt = $conn->prepare("select * from pretty_offer where user_id=".$_SESSION['userID']);
+    $stmt->execute();
+    arrayToXml($stmt->fetchAll(PDO::FETCH_ASSOC));
+}
+
+function flagSelector($zeme)
+{
+    $imgPath = '';
+    switch ($zeme) {
+        case 'Bali':
+            $imgPath = "img/flags/bali_flag.jpg";
+            break;
+        case 'Austrálie':
+            $imgPath = "img/flags/australian_flag.jpg";
+            break;
+        case 'Finsko':
+            $imgPath = "img/flags/finland_flag.jpg";
+            break;
+        case 'Španělsko':
+            $imgPath = "img/flags/spain_flag.jpg";
+            break;
+        case 'Itálie':
+            $imgPath = "img/flags/italy_flag.jpg";
+            break;
+        case 'Francie':
+            $imgPath = "img/flags/france_flag.jpg";
+            break;
+        case 'Řecko':
+            $imgPath = "img/flags/greece_flag.jpg";
+            break;
+        case 'Velká Británie':
+            $imgPath = "img/flags/uk_flag.jpg";
+            break;
+        case 'USA':
+            $imgPath = "img/flags/usa_flag.jpg";
+            break;
+    }
+    return $imgPath;
+}
+
+function cutStringAtLastCommaOrPeriodBeforeN($str, $n)
+{
+    $rawCutted = substr_replace($str, '', $n);
+    $lastComma = strripos($rawCutted, ', ');
+    $lastPeriod = strripos($rawCutted, '.');
+    if($lastComma > $lastPeriod){
+        echo substr_replace(substr_replace($str, '', $n), ' ... ', $lastComma + 1);
+    } else {
+        echo substr_replace(substr_replace($str, '', $n), ' ... ', $lastPeriod + 1);}
+}
+
+?>
+<!--TODO
+    - nakopčit sorty a searche do admin_dest
+    - profile pic
+    - výstpuní sestava
+-->
 
 
 <!DOCTYPE html>
@@ -255,7 +330,7 @@ if(isset($_POST['new_comment_hotel_id']) && isset($_POST['new_comment']) && isse
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Barunka - Multipurpose Bootstrap template by Bootstrapious.com</title>
+    <title>Sunset travel</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -284,7 +359,7 @@ if(isset($_POST['new_comment_hotel_id']) && isset($_POST['new_comment']) && isse
 <header class="header">
     <div role="navigation" class="navbar navbar-default">
         <div class="container">
-            <div class="navbar-header"><a href="?page=home" class="navbar-brand">ěĚšŠčČřŘžŽýÝáÁíÍéÉúÚůŮ</a>
+            <div class="navbar-header"><a href="?page=home" class="navbar-brand">Sunset travel</a>
                 <div class="navbar-buttons">
                     <button type="button" data-toggle="collapse" data-target=".navbar-collapse"
                             class="navbar-toggle navbar-btn">Menu<i class="fa fa-align-justify"></i></button>
@@ -378,7 +453,7 @@ if(isset($_POST['new_comment_hotel_id']) && isset($_POST['new_comment']) && isse
                 <h4 id="Login" class="modal-title">Přihlášení</h4>
             </div>
             <div class="modal-body">
-                <form action="index.php?page=home" method="post">
+                <form action="index.php?page=profile" method="post">
                     <div class="form-group">
                         <input id="input_login_modal" name="input_login_modal" type="text"
                                placeholder="Přihlašovací jméno" class="form-control" required>
@@ -457,7 +532,7 @@ if (isset($_GET['page'])) {
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <p>&copy;2017 Your name goes here</p>
+                    <p>&copy;2017-2018 Jonáš Urban</p>
                 </div>
                 <div class="col-md-6">
                     <p class="credit">Template by <a href="https://bootstrapious.com/free-templates" class="external">Bootstrapious

@@ -194,7 +194,7 @@ function roomsTable()
                 elementy = rows[i + 1].getElementsByTagName("td")[1];
                 inputy = elementy.getElementsByTagName("input")[1];
                 y = inputy.getAttribute("value");
-                if (dir == "up") {
+                if (dir === "up") {
                     if (x.toLowerCase() > y.toLowerCase()) {
                         shouldSwitch = true;
                         break;
@@ -213,9 +213,6 @@ function roomsTable()
         }
     }
 
-    function searchInTable(id) {
-
-    }
 
 </script>
 
@@ -232,9 +229,9 @@ function roomsTable()
         <div class="col-md-8">
             <a name="admin_countries" class="anchor"><h3>Správa zemí</h3></a>
             <a href="#admin_top" class="breadcrumb">Nahoru</a><br/><br/>
-            <table class="table" id="countriesTable">
+            <table class="table" id="countries_table">
                 <tr>
-                    <th style='text-align: center'> ID</th>
+                    <th style="width: 70px; text-align: center;">ID</th>
                     <th> Název</th>
                     <th style='text-align: center'>Upravit</th>
                     <th style="text-align: center;">Odstranit</th>
@@ -250,13 +247,11 @@ function roomsTable()
         </div>
         <div class="col-md-4">
             <div class="row">
-                <h3>Řazení & vyhledávání</h3>
+                <h3>Řazení</h3>
             </div>
             <div class="row">
-                <div>
-                    <button onclick="sortTable('countriesTable', 'up')" class="btn btn-ghost">vzestupně</button>
-                    <button onclick="sortTable('countriesTable', 'down')" class="btn btn-ghost">sestupně</button>
-                </div>
+                <button class="btn btn-ghost" onclick="sortTable('countries_table', 'up')">vzestupně</button>
+                <button class="btn btn-ghost" onclick="sortTable('countries_table', 'down')">sestupně</button>
             </div>
         </div>
     </div>
@@ -266,7 +261,7 @@ function roomsTable()
         <div class="col-md-8">
             <a name="admin_cities" class="anchor"><h3>Správa měst</h3></a>
             <a href="#admin_top" class="breadcrumb">Nahoru</a><br/><br/>
-            <table class="table">
+            <table class="table" id="cities_table">
                 <tr>
                     <th>ID</th>
                     <th width="270px">Název</th>
@@ -284,6 +279,17 @@ function roomsTable()
                 <tr>
             </table>
         </div>
+        <div class="col-md-4">
+            <div class="row">
+                <h3>Řazení</h3>
+            </div>
+            <div class="row">
+                <div>
+                    <button onclick="sortTable('cities_table', 'up')" class="btn btn-ghost">vzestupně</button>
+                    <button onclick="sortTable('cities_table', 'down')" class="btn btn-ghost">sestupně</button>
+                </div>
+            </div>
+        </div>
     </div>
     <hr/>
     <br/>
@@ -291,7 +297,7 @@ function roomsTable()
         <div class="col-md-8">
             <a name="admin_hotels" class="anchor"><h3>Správa hotelů</h3></a>
             <a href="#admin_top" class="breadcrumb">Nahoru</a><br/><br/>
-            <table class="table">
+            <table class="table" id="hotels_table">
                 <tr>
                     <th>ID</th>
                     <th width="270px">Název</th>
@@ -309,6 +315,17 @@ function roomsTable()
                 </tr>
             </table>
         </div>
+        <div class="col-md-4">
+            <div class="row">
+                <h3>Řazení</h3>
+            </div>
+            <div class="row">
+                <div>
+                    <button onclick="sortTable('hotels_table', 'up')" class="btn btn-ghost">vzestupně</button>
+                    <button onclick="sortTable('hotels_table', 'down')" class="btn btn-ghost">sestupně</button>
+                </div>
+            </div>
+        </div>
     </div>
     <hr/>
     <br/>
@@ -316,7 +333,7 @@ function roomsTable()
         <div class="col-md-8">
             <a name="admin_rooms" class="anchor"><h3>Správa mísntostí</h3></a>
             <a href="#admin_top" class="breadcrumb">Nahoru</a><br/><br/>
-            <table class="table">
+            <table class="table" id="rooms_table">
                 <tr>
                     <th>ID</th>
                     <th width="100px">Počet lůžek</th>
@@ -333,6 +350,17 @@ function roomsTable()
                     </td>
                 </tr>
             </table>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <h3>Řazení</h3>
+            </div>
+            <div class="row">
+                <div>
+                    <button onclick="sortTable('rooms_table', 'up')" class="btn btn-ghost">vzestupně</button>
+                    <button onclick="sortTable('rooms_table', 'down')" class="btn btn-ghost">sestupně</button>
+                </div>
+            </div>
         </div>
     </div>
 </section>

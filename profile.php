@@ -26,7 +26,6 @@
                     echo "<img src='" . $result[0] . "' style=\"width:200px; height: 200px;\";/><br/><br/>";
                 }
                 ?>
-                <a href="#" class="btn btn-ghost">Změnit obrázek</a>
 
             </div>
         </div>
@@ -88,6 +87,11 @@
                     </td></tr>";
             }
             ?>
+            <tr>
+                <td colspan="8" style="text-align: center;">
+                    <a class="btn btn-ghost" href="index.php?page=profile&download_xml=true">Stáhnout data v XML</a>
+                </td>
+            </tr>
 
         </table>
     </div>
